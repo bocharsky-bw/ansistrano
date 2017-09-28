@@ -59,6 +59,8 @@
     owner: '{{ ansible_user }}'
     group: www-data
     recurse: yes
+    # We need it because shared logs and sessions are symlinks now
+    follow: yes
 
 - name: Setup directories permissions in var/ dir
   become: true
