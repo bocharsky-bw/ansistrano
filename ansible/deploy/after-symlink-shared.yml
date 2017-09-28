@@ -64,7 +64,7 @@
 
 - name: Setup directories permissions in var/ dir
   become: true
-  command: 'find -L {{ release_var_path }} -type d -exec chmod 0555 {} \;'
+  command: 'find -L {{ release_var_path }} -type d -exec chmod 0755 {} \;'
 
 - name: Setup files permissions in var/ dir
   become: true
