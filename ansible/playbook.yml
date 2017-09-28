@@ -2,6 +2,8 @@
 - hosts: webserver
 
   vars_files:
+    - ./vars/provision_vault.yml
+    - ./vars/provision_vars.yml
     - ./vars/vars.yml
 
   pre_tasks:
