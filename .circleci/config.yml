@@ -59,6 +59,9 @@ jobs:
     docker:
       - image: ansible/ansible:ubuntu1604
     steps:
+      - run:
+          name: Install System Packages
+          command: pip install --upgrade pip && pip install ansible
       - checkout
       - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -l aws -e "ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --ask-vault-pass
 
