@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Video;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class DefaultController extends Controller
 {
@@ -55,6 +56,17 @@ class DefaultController extends Controller
     public function aboutAction()
     {
         return $this->render('default/about.html.twig');
+    }
+
+    /**
+     * @Route("/api/videos")
+     */
+    public function videosApiAction()
+    {
+        $videos = $this->getVideoRepository()
+            ->findAll();
+
+        return $this->json(['videos' => $videos]);
     }
 
     /**
@@ -111,6 +123,9 @@ class DefaultController extends Controller
         return $this->get('doctrine')->getRepository(Video::class);
     }
 
+    /**
+     * @return AdapterInterface
+     */
     private function getAppCache()
     {
         return $this->get('cache.app');

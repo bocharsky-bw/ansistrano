@@ -2,6 +2,8 @@
 - hosts: webserver
 
   vars_files:
+    - ./vars/provision_vault.yml
+    - ./vars/provision_vars.yml
     - ./vars/vars.yml
 
   pre_tasks:
@@ -96,41 +98,25 @@
         value: UTC
       notify: Restart PHP-FPM
 
-    # Allows Ansistrano to remove cache files that have 0664 permissions and www-data owner/group
-    - name: Add current user to the www-data group
-      become: true
-      user:
-        name: '{{ ansible_user }}'
-        groups: www-data
-        append: yes
-
     - name: Check for Composer
       stat:
         path: /usr/local/bin/composer
       register: composer_stat
-      tags:
-        - deploy
 
     - name: Download Composer
       script: scripts/install_composer.sh
       when: not composer_stat.stat.exists
-      tags:
-        - deploy
 
     - name: Move Composer globally
       become: true
       command: mv composer.phar /usr/local/bin/composer
       when: not composer_stat.stat.exists
-      tags:
-        - deploy
 
     - name: Set permissions on Composer
       become: true
       file:
         path: /usr/local/bin/composer
         mode: "a+x"
-      tags:
-        - deploy
 
     - name: Make sure Composer is at its latest version
       composer:
@@ -138,12 +124,18 @@
         command: self-update
       register: composer_self_update
       changed_when: "not composer_self_update.stdout|search('You are already using composer version')"
+
+    - name: Set GitHub OAuth token for Composer
+      composer:
+        command: config
+        arguments: '-g github-oauth.github.com "{{ github_oauth_token }}"'
+        working_dir: "/home/{{ ansible_user }}"
       tags:
-        - deploy
+        - github_oauth
 
     # Node
     - name: Register NodeJS distribution
-      shell: 'curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -'
+      shell: 'curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -'
       changed_when: false
 
     - name: Install NodeJS
