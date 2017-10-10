@@ -38,17 +38,19 @@ jobs:
             - '/root/.composer/cache'
             - './vendor'
 
+      # Database
+      - run: ./bin/console doctrine:database:create --env=test
+      - run: ./bin/console doctrine:schema:create --env=test
+      - run: ./bin/console hautelook_alice:doctrine:fixtures:load --no-interaction
+
       # To use server:start we need to install pcntl extension
       - run:
           name: Run web server in background
           command: ./bin/console server:run
           background: true
 
-      # Database
-      - run: ./bin/console doctrine:database:create --env=test
-      - run: ./bin/console doctrine:schema:create --env=test
-      - run: ./bin/console hautelook_alice:doctrine:fixtures:load --no-interaction
-
+  test:
+    steps:
       # Tests
       - run: ./bin/console lint:yaml app/config
       - run: ./bin/console lint:twig app/Resources
