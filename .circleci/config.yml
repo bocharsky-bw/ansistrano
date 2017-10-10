@@ -58,6 +58,8 @@ jobs:
     working_directory: ~/mootube
     docker:
       - image: ansible/ansible:ubuntu1604
+        environment:
+          ANSIBLE_HOST_KEY_CHECKING: no
     steps:
       # Installation
       - run:
@@ -70,7 +72,7 @@ jobs:
       # @TODO Cache deps
 
       - run: echo $ANSIBLE_VAULT_PASS > ansible/.vault-pass.txt
-      - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -l aws -e "git_branch=master ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --vault-password-file=ansible/.vault-pass.txt
+      - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -e "git_branch=master ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --vault-password-file=ansible/.vault-pass.txt
       - run: rm ansible/.vault-pass.txt
 
 workflows:
