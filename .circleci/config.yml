@@ -54,17 +54,19 @@ jobs:
       - run: ./bin/console lint:twig app/Resources
       - run: ./vendor/bin/simple-phpunit
 
-#  deploy:
-#    working_directory: ~/mootube
-#    docker:
-#      - image: php:7.1
-#    steps:
+  deploy:
+    working_directory: ~/mootube
+    docker:
+      - image: ansible/ansible:latest
+    steps:
+      - checkout
+      - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -l aws -e "ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --ask-vault-pass
 
 workflows:
   version: 2
   build_test_and_deploy:
     jobs:
       - build_and_test
-#      - deploy:
-#          requires:
-#            - build_and_test
+      - deploy:
+          requires:
+            - build_and_test
