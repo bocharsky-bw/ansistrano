@@ -59,10 +59,16 @@ jobs:
     docker:
       - image: ansible/ansible:ubuntu1604
     steps:
+      # Installation
       - run:
           name: Install System Packages
           command: pip install --upgrade pip && pip install ansible
+
+      # Dependencies
       - checkout
+      - run: ansible-galaxy install -r ansible/requirements.yml
+      # @TODO Cache deps
+
       - run: echo $ANSIBLE_VAULT_PASS > ansible/.vault-pass.txt
       - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -l aws -e "ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --vault-password-file=ansible/.vault-pass.txt
       - run: rm ansible/.vault-pass.txt
@@ -75,4 +81,3 @@ workflows:
       - deploy:
           requires:
             - build_and_test
-
