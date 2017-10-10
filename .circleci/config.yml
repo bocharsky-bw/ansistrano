@@ -68,12 +68,19 @@ jobs:
 
       # Dependencies
       - checkout
+      - restore_cache:
+          key: mootube-{{ .Branch }}-{{ checksum "./ansible/requirements.yml" }}-v1
       - run: ansible-galaxy install -r ansible/requirements.yml
-      # @TODO Cache deps
+      - save_cache:
+          key: mootube-{{ .Branch }}-{{ checksum "./ansible/requirements.yml" }}-v1
+          paths:
+            - '/root/.ansible/roles'
 
-      - run: echo $ANSIBLE_VAULT_PASS > ansible/.vault-pass.txt
-      - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -e "git_branch=master ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --vault-password-file=ansible/.vault-pass.txt
-      - run: rm ansible/.vault-pass.txt
+      - run: echo $ANSIBLE_SSH_PRIVATE_KEY > ~/.ssh/KnpU-Tutorial.pem
+      - run: echo $ANSIBLE_VAULT_PASS > ./ansible/.vault-pass.txt
+      - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -e "git_branch=master ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --vault-password-file=./ansible/.vault-pass.txt
+      - run: rm ~/.ssh/KnpU-Tutorial.pem
+      - run: rm ./ansible/.vault-pass.txt
 
 workflows:
   version: 2
