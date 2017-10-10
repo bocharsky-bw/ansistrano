@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build_and_test:
+  build:
     working_directory: ~/mootube
     docker:
       - image: php:7.1
