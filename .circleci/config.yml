@@ -38,7 +38,11 @@ jobs:
             - '/root/.composer/cache'
             - './vendor'
 
-      - run: ./bin/console server:start
+      # To use server:start we need to install pcntl extension
+      - run:
+          name: Run web server in background
+          command: ./bin/console server:run
+          background: true
 
       # Database
       - run: ./bin/console doctrine:database:create --env=test
