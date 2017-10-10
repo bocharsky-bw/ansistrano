@@ -82,7 +82,9 @@ jobs:
           echo $ANSIBLE_SSH_PRIVATE_KEY > ~/.ssh/KnpU-Tutorial.pem && \
           chmod 0600 ~/.ssh/KnpU-Tutorial.pem && \
           sed -i "s/\\\n /\n/g" ~/.ssh/KnpU-Tutorial.pem
-      - run: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -e "git_branch=master ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --vault-password-file=./ansible/.vault-pass.txt
+      - run:
+          command: ansible-playbook ansible/deploy.yml -i ansible/hosts.ini -e "git_branch=master ansistrano_release_version=`date -u +%Y%m%d%H%M%SZ`" --vault-password-file=./ansible/.vault-pass.txt
+          no_output_timeout: 20m
       - run: rm ./ansible/.vault-pass.txt
       - run: rm ~/.ssh/KnpU-Tutorial.pem
 
