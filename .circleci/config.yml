@@ -57,7 +57,20 @@ jobs:
         environment:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
     steps:
-      # Tests
+      # Dependencies
+      - checkout
+      - restore_cache:
+          key: mootube-{{ .Branch }}-{{ checksum "./composer.lock" }}-v1
+      - run: composer install --prefer-dist --no-interaction
+      # Force pulling Simple PHPUnit dependencies to be able to cache them as well
+      - run: ./vendor/bin/simple-phpunit --version
+      - save_cache:
+          key: mootube-{{ .Branch }}-{{ checksum "./composer.lock" }}-v1
+          paths:
+            - '/root/.composer/cache'
+            - './vendor'
+
+      # Testing
       - run: ./bin/console lint:yaml app/config
       - run: ./bin/console lint:twig app/Resources
       - run: ./vendor/bin/simple-phpunit
