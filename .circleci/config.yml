@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  build_and_test:
     working_directory: ~/mootube
     docker:
       - image: php:7.1
@@ -49,40 +49,7 @@ jobs:
           command: ./bin/console server:run
           background: true
 
-  test:
-    working_directory: ~/mootube
-    docker:
-      - image: php:7.1
-      - image: mysql:5.7
-        environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-    steps:
-      # Dependencies
-      - checkout
-      - restore_cache:
-          key: mootube-{{ .Branch }}-{{ checksum "./composer.lock" }}-v1
-      - run: composer install --prefer-dist --no-interaction
-      # Force pulling Simple PHPUnit dependencies to be able to cache them as well
-      - run: ./vendor/bin/simple-phpunit --version
-      - save_cache:
-          key: mootube-{{ .Branch }}-{{ checksum "./composer.lock" }}-v1
-          paths:
-            - '/root/.composer/cache'
-            - './vendor'
-
       # Testing
       - run: ./bin/console lint:yaml app/config
       - run: ./bin/console lint:twig app/Resources
       - run: ./vendor/bin/simple-phpunit
-
-workflows:
-  version: 2
-  build-test-and-deploy:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
-#      - deploy:
-#          requires:
-#            - test2

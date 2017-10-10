@@ -33,8 +33,3 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
-
-    # Prevents cache.app from being cleared on cache:clear
-    # this bug is fixed in Symfony 3.4
-    cache.app_clearer:
-        class: Symfony\Component\HttpKernel\CacheClearer\Psr6CacheClearer
