@@ -7,9 +7,10 @@
 - name: Install Composer dependencies
   composer:
     command: install
+    arguments: --apcu-autoloader
     working_dir: '{{ ansistrano_release_path.stdout }}'
 
-- name: Use Composer's Class Map Functionality
+- name: Dump Composer autoload to use class map functionality
   composer:
     command: dump-autoload
     arguments: --optimize --classmap-authoritative
