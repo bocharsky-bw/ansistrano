@@ -6,6 +6,7 @@ use AppBundle\Entity\Video;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
@@ -53,8 +54,10 @@ class DefaultController extends Controller
      *
      * @Route("/about", name="about")
      */
-    public function aboutAction()
+    public function aboutAction(Request $request)
     {
+        dump($request->server->all());
+
         return $this->render('default/about.html.twig');
     }
 
