@@ -56,7 +56,11 @@ class DefaultController extends Controller
      */
     public function aboutAction(Request $request)
     {
-        dump($request->server->all());
+        var_dump($request->server->all());
+        var_dump($request->getUser());
+        var_dump($request->getUserInfo());
+        var_dump($request->getClientIp());
+        var_dump($request->getClientIps());
 
         return $this->render('default/about.html.twig');
     }
