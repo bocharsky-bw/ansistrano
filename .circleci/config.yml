@@ -58,6 +58,8 @@ jobs:
     working_directory: ~/mootube
     docker:
       - image: ansible/ansible:ubuntu1604
+        environment:
+          ANSIBLE_HOST_KEY_CHECKING: no
     steps:
       # Installation
       - run:
